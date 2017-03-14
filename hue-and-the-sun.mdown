@@ -1,0 +1,39 @@
+# Hue and the Sun
+
+## Misc
+
+### Sunrise Times
+My coords -- 34.168851, -118.605448
+
+http://api.sunrise-sunset.org/json?lat=34.168851&lng=-118.605448&date=today
+
+https://sunsetwx.com/sunburst/
+
+
+### Node & APIs 
+http://stackoverflow.com/questions/5643321/how-to-make-remote-rest-call-inside-node-js-any-curl
+
+https://rapiddg.com/blog/calling-rest-api-nodejs-script
+
+#### Scheduling
+https://www.npmjs.com/package/node-schedule
+
+
+## Basics (v1)
+
+1. Get today's sun event times
+2. Create array of light-event objects
+	- WHEN (when event should happen -- based on path of sun at your location)
+	- WHAT (what hue should do at the target time -- based on predefined scenes most likely)
+3. Execute each event at it's designated time throughout the day.
+
+Fig 2.
+=======================
+events = [
+	{
+		time:"",
+		action: lightEvent(),
+	},
+	...
+]
+=======================

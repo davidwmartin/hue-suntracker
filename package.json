@@ -1,0 +1,14 @@
+{
+  "name": "hue suntracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "suntracker.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "David W Martin",
+  "license": "BMAB (buy me a beer)",
+  "dependencies": {
+    "crontab": "^1.1.3"
+  }
+}
