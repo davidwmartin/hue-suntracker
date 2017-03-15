@@ -1,9 +1,15 @@
 # Hue Suntracker
 
+IN DEVELOPMENT
+
 Sync your Philips Hue lights with the sun, using node + cron.
 
 See hue-and-the-sun.mdown for dev notes / explanation. 
 
 Intended for use on a raspberry pi, but anything linux should be fine (uses cron).
 
-IN DEVELOPMENT
+
+
+## TODO 
+
+* Extract common Hue components for use in other apps (or turn this into more of a master-hue-project repository)
