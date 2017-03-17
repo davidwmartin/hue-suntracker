@@ -13,33 +13,32 @@ var username = hueLogin.username,
 
 
 ////////////// FIRE MISSILES
-// NOTE -- meant to be called from command line (i.e. w/cron), assumes first argument will be the ID of the desired scene
+// NOTE -- meant to be called from command line (e.g. w/cron), assumes first argument will be the ID of the desired scene
 var requestedSceneId = process.argv[2];
 hueActivate(requestedSceneId);
 
 
 ////// Guts of it
 
-// Main function -- connects to bridge and activates scene (scene ID passed in as argument)
+// Main function -- connects to bridge and activates scene (takes sceneId arg)
 function hueActivate(sceneId){
 	// search for bridges
 	hue.nupnpSearch()
 		.then(function(data){
-			
-			// TODO -- feel like this could be cleaner
-			hostname = bridgeConnect(data);
-			changeScene(sceneId, hostname);
+
+			api = bridgeConnect(data);
+			changeScene(sceneId, api);
 
 		})
 		.done();
 }
 
-// gets IP address of first bridge connected to network, make api connection
+// gets IP address of first bridge connected to network, returns api object
 function bridgeConnect(bridge){
 	hostname = bridge[0].ipaddress;
 	console.log("bridge host: " + hostname);
-	api = new HueApi(hostname, username)
-	console.log(api);
+	api = new HueApi(hostname, username);
+	console.log("api: " + api);
 	return api;
 }
 

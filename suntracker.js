@@ -2,38 +2,26 @@
 var querystring = require('querystring'),
 		http = require('http'),
 		crontab = require('crontab'), 
-		moment = require('moment'), 
-		hueConnect = require('./hue-connect');
+		moment = require('moment');
 
-// array of timing events
-var firstEventTime, secondEventTime, thirdEventTime,
-	lightEvents = [
-		{
-			time:"1 * * * *",
-			scene:"eL1TQfrb8mmUfjS" // "bright"
-		},
-		{
-			time:"2 * * * *",
-			scene:"44vKzz9DvQNo46l" // "decoGreco..."
-		},
-		{
-			time:"3 * * * *",
-			scene:"Dn0iPwOfg076cME" // "dim"
-		}
-	];
+// light event variables (may not need these here)
+var lightEvents = [];
+
 
 ////// Main Action Here:
 
 // fire primary function to do everything
-// getSunrise();
+function masterBlaster(){
+	getSunset();
 
-// Fires hue connect script (imported above)
-// hueConnect.connect("w0H0sWrsfetnqWF");
+
+};
+masterBlaster();
 
 
 
 ////// Make call to sunrise-sunset API to get sun timing info for today
-function getSunrise() { 
+function getSunset() { 
 	
 	var sunDataSet;
 
@@ -56,7 +44,7 @@ function getSunrise() {
 	  	sunDataSet = sunData.results.sunset;
 
 	  	// call function to calculate light events based on sunset
-	  	calcLightEvents(sunDataSet);
+	  	lightEvents = calcLightEvents(sunDataSet);
 
 	  });
 
@@ -68,42 +56,72 @@ function getSunrise() {
 ////// Calculate timing of necessary light changes
 function calcLightEvents(sunDataSet){
 
-	console.log("calc function: " + sunDataSet);
+	console.log("sunset: " + sunDataSet);
 
 	// get moment.js moment for sunset
 	var sdrMoment = moment(sunDataSet);
 	// get time for 45 mins before sunset
+	var prePreSunset = sdrMoment.subtract(120,'m').format("m H D M");
 	var preSunset = sdrMoment.subtract(45,'m').format("m H D M");
+	var postSunset1 = sdrMoment.add(75,'m').format("m H D M");
+	var postSunset2 = sdrMoment.add(255,'m').format("m H D M");
 	// console.log("preSunset: " + preSunset);
 
-	// schedule cron events based on times calculated here
-	cronSched(preSunset+" *");
 
+	// TODO - seems a bit verbose setting up the event array this way (also some dirrrttyy ish happening with the string concatenation) (also not super easy to add events if doing it this way)
+	firstEventTime = preSunset + " *";
+	secondEventTime = postSunset1 + " *";
+	thirdEventTime = postSunset2 + " *";
+	fourthEventTime = prePreSunset + " *";
+
+	// timing variables and array of timeXlight events
+	lightEvents = [
+		{
+			time:fourthEventTime,
+			scene:"SzTWcta-JSvvPj1" // "creekbed afternoon"
+		},
+		{
+			time:firstEventTime,
+			scene:"eL1TQfrb8mmUfjS" // "bright"
+		},
+		{
+			time:secondEventTime,
+			scene:"PVB-BYTBE2OzN7j" // "pencils"
+		},
+		{
+			time:thirdEventTime,
+			scene:"t6BAS0g6mBJiznk" // "tropical twilight"
+		}
+	];
+
+	console.log('calculated events: '+ lightEvents.length);
+
+	// return lightEvents;
+	cronSched(lightEvents);
 }
 
 
 ////// CRON
 
 // Gets path of hue script (for cron command)
-function getLightScriptPath(){
+// TODO -- move / refactor?
+function getHueScriptPath(){
 	var lightScriptPath = require.resolve('./hue-connect');
-
 	return lightScriptPath;
 }
 
-
 // formats cron command
 function formatCron(sceneId){
-	var hueScriptPath = process.argv[1];
+	var hueScriptPath = getHueScriptPath();
 	// TODO -- better way of formatting command? bit rough, but I suppose it works
 	formattedCommand = "node " + hueScriptPath + " " + sceneId;
-	console.log(formattedCommand);
+	console.log("formatted command: " + formattedCommand);
+
 	return formattedCommand;
 }
 
-
 // schedules cron jobs
-function cronSched(){
+function cronSched(lightEvents){
 
 	crontab.load(function(err, crontab) {
 		if (err){
@@ -112,25 +130,27 @@ function cronSched(){
 
 		var jobScene, jobCommand, jobTime;
 
-		for (i = 0; i < 3; i++){
+		for (i = 0; i < lightEvents.length; i++){
 
 			jobScene = lightEvents[i].scene;
 			jobCommand = formatCron(jobScene);
 			jobTime = lightEvents[i].time;
-			
-			// crontab.create(jobCommand, jobTime);
 
-			console.log(jobCommand);
+			// var currentJob = crontab.create(jobCommand,jobTime);
+			var currentJob = crontab.create(jobCommand, jobTime);
+			
+			console.log('job created. index: ' + i);
 
 		}
 
+		var jobsss = crontab.jobs();
+		console.log(jobsss);
 		// save
 	  crontab.save(function(err, crontab) {});
 
 		console.log("cronSched complete");
+		console.log("crontab: " + JSON.stringify(crontab));
 
 	});
 
 }
-
-// cronSched();
