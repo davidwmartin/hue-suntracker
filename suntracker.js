@@ -10,13 +10,8 @@ var lightEvents = [];
 
 ////// Main Action Here:
 
-// fire primary function to do everything
-function masterBlaster(){
-	getSunset();
-
-
-};
-masterBlaster();
+// fire first function to do everything
+getSunset();
 
 
 
@@ -34,9 +29,6 @@ function getSunset() {
 	// executes http request to get sunset time
 	http.get(options.host, function(res){
 		var data = "";
-
-		// console.log('STATUS: ' + res.statusCode);
-	 //  console.log('HEADERS: ' + JSON.stringify(res.headers));
 	  
 	  res.setEncoding('utf8');
 	  res.on('data', function (chunk) {
@@ -60,15 +52,14 @@ function calcLightEvents(sunDataSet){
 
 	// get moment.js moment for sunset
 	var sdrMoment = moment(sunDataSet);
-	// get time for 45 mins before sunset
+	// get moments for various offsets from sunset
 	var prePreSunset = sdrMoment.subtract(120,'m').format("m H D M");
 	var preSunset = sdrMoment.subtract(45,'m').format("m H D M");
 	var postSunset1 = sdrMoment.add(75,'m').format("m H D M");
 	var postSunset2 = sdrMoment.add(255,'m').format("m H D M");
-	// console.log("preSunset: " + preSunset);
-
 
 	// TODO - seems a bit verbose setting up the event array this way (also some dirrrttyy ish happening with the string concatenation) (also not super easy to add events if doing it this way)
+	// TODO - unnecessary
 	firstEventTime = preSunset + " *";
 	secondEventTime = postSunset1 + " *";
 	thirdEventTime = postSunset2 + " *";
@@ -138,7 +129,7 @@ function cronSched(lightEvents){
 
 			// var currentJob = crontab.create(jobCommand,jobTime);
 			var currentJob = crontab.create(jobCommand, jobTime);
-			
+
 			console.log('job created. index: ' + i);
 
 		}

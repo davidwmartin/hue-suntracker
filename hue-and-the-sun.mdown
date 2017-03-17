@@ -19,21 +19,11 @@ https://rapiddg.com/blog/calling-rest-api-nodejs-script
 https://www.npmjs.com/package/node-schedule
 
 
-## Basics (v1)
+## Code Overview
 
-1. Get today's sun event times
-2. Create array of light-event objects
-	- WHEN (when event should happen -- based on path of sun at your location)
-	- WHAT (what hue should do at the target time -- based on predefined scenes most likely)
-3. Execute each event at it's designated time throughout the day.
+Two Main Parts:
 
-Fig 2.
-=======================
-events = [
-	{
-		time:"",
-		action: lightEvent(),
-	},
-	...
-]
-=======================
+1. suntracker.js -- gets sunset time, calculates light event times, schedules cron jobs
+2. hue-connect.js -- used to connect to hue bridge and execute light changes at scheduled time (will likely be extended / replaced by more robust set of node-based hue tools)
+
+See comments in those files to get a sense for how it works.

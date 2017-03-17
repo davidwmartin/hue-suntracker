@@ -14,3 +14,5 @@ Intended for use on a raspberry pi, but anything linux should be fine (uses cron
 
 * Extract common Hue components for use in other apps (or turn this into more of a master-hue-project repository)
 	- search for scenes by name?
+* Generalize so it's not hardcoded for my geographic location
+* Better way of organizing / setting up light-change events. 
