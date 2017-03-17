@@ -13,3 +13,4 @@ Intended for use on a raspberry pi, but anything linux should be fine (uses cron
 ## TODO 
 
 * Extract common Hue components for use in other apps (or turn this into more of a master-hue-project repository)
+	- search for scenes by name?

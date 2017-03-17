@@ -94,7 +94,10 @@ function getLightScriptPath(){
 
 // formats cron command
 function formatCron(sceneId){
-	formattedCommand = "cmd goes here " + sceneId;
+	var hueScriptPath = process.argv[1];
+	// TODO -- better way of formatting command? bit rough, but I suppose it works
+	formattedCommand = "node " + hueScriptPath + " " + sceneId;
+	console.log(formattedCommand);
 	return formattedCommand;
 }
 
@@ -130,4 +133,4 @@ function cronSched(){
 
 }
 
-cronSched();
+// cronSched();
