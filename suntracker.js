@@ -9,15 +9,15 @@ var querystring = require('querystring'),
 var firstEventTime, secondEventTime, thirdEventTime,
 	lightEvents = [
 		{
-			time:firstEventTime,
+			time:"1 * * * *",
 			scene:"eL1TQfrb8mmUfjS" // "bright"
 		},
 		{
-			time:secondEventTime,
+			time:"2 * * * *",
 			scene:"44vKzz9DvQNo46l" // "decoGreco..."
 		},
 		{
-			time:thirdEventTime,
+			time:"3 * * * *",
 			scene:"Dn0iPwOfg076cME" // "dim"
 		}
 	];
@@ -93,38 +93,41 @@ function getLightScriptPath(){
 
 
 // formats cron command
-function formatCron(){
-
-	for (i = 0; i < 3; i++){
-		command = lightEvents[i].scene;
-		jobTime = lightEvents[i].time;
-
-		cronSched(command, jobTime);
-	}
-
+function formatCron(sceneId){
+	formattedCommand = "cmd goes here " + sceneId;
+	return formattedCommand;
 }
 
-formatCron();
 
-
-// Schedules actual jobs w/passed in command and jobTime
-function cronSched(command, jobTime){
+// schedules cron jobs
+function cronSched(){
 
 	crontab.load(function(err, crontab) {
 		if (err){
 			return console.log(err);
 		}
 
-		var job = crontab.create(command, jobTime);
+		var jobScene, jobCommand, jobTime;
 
-		// var jobs = crontab.jobs();
-		// console.log(jobs);
+		for (i = 0; i < 3; i++){
+
+			jobScene = lightEvents[i].scene;
+			jobCommand = formatCron(jobScene);
+			jobTime = lightEvents[i].time;
+			
+			// crontab.create(jobCommand, jobTime);
+
+			console.log(jobCommand);
+
+		}
 
 		// save
 	  crontab.save(function(err, crontab) {});
 
-		console.log("cron job scheduling complete");
+		console.log("cronSched complete");
 
 	});
 
 }
+
+cronSched();
