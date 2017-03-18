@@ -1,2 +1,3 @@
-config/hue-login.js
+config/
 notes.mdown
+node_modules/
