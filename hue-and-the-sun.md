@@ -5,7 +5,7 @@
 ### Sun Times
 http://api.sunrise-sunset.org/json?lat=LATTITUDE&lng=-LONGITUDE&date=today
 
-### Node & APIs 
+### Node & APIs
 http://stackoverflow.com/questions/5643321/how-to-make-remote-rest-call-inside-node-js-any-curl
 
 https://rapiddg.com/blog/calling-rest-api-nodejs-script
@@ -23,7 +23,7 @@ Two Main Parts:
 See comments in those files to get a sense for how it works.
 
 NOT INCLUDED IN REPO:
-config folder containing the following: 
+config folder containing the following:
 
 hue-login.js
 
