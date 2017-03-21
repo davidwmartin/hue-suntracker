@@ -27,9 +27,10 @@ config folder containing the following:
 
 hue-login.js
 
-	hueLogin - {
+	var hueLogin = {
 		username = "YOUR HUE BRIDGE USERNAME GOES HERE"
 	}
+	
 
 sunset-events.js (add as many sunset events as you want)
 
