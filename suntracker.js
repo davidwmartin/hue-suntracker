@@ -3,14 +3,29 @@ var querystring = require('querystring'),
 		http = require('http'),
 		crontab = require('crontab'), 
 		moment = require('moment'),
+		fs = require('fs'),
 		lightEvents = require('./config/sunset-events'); // gets lightEvents array from external config file
 
 
 ////// Main Action Here:
 
-// fire first function to do everything
-getSunset();
+simpleLog('\n------------------------------');
+simpleLog('\n' + moment().format('LLLL') + '\n');
 
+doEverything();
+
+
+function doEverything(){
+
+	var sunset = getSunset(); // get sunset time
+
+	sunset.then(function(result){
+		simpleLog("sunset: " + result);
+		var lightEvents = calcLightEvents(result);
+		cronSched(lightEvents); // do cron stuff
+	});
+
+}
 
 
 ////// Make call to sunrise-sunset API to get sun timing info for today
@@ -24,19 +39,21 @@ function getSunset() {
 		host: 'http://api.sunrise-sunset.org/json?lat=34.168851&lng=-118.605448&date=today&formatted=0'
 	}
 
-	// executes http request to get sunset time
-	http.get(options.host, function(res){
-		var data = "";
-	  
-	  res.setEncoding('utf8');
-	  res.on('data', function (chunk) {
-	  	var sunData = JSON.parse(chunk);
-	  	sunDataSet = sunData.results.sunset;
 
-	  	// call function to calculate light events based on sunset
-	  	lightEvents = calcLightEvents(sunDataSet);
+	return new Promise(function(resolve, reject) {
 
-	  });
+		// executes http request to get sunset time
+		http.get(options.host, function(res){
+			var data = "";
+		  
+		  res.setEncoding('utf8');
+		  res.on('data', function (chunk) {
+		  	var sunData = JSON.parse(chunk);
+		  	sunDataSet = sunData.results.sunset;
+		  	resolve(sunDataSet);
+		  });
+		});
+
 
 	});
 
@@ -44,22 +61,20 @@ function getSunset() {
 
 
 ////// Calculate timing of necessary light changes
-function calcLightEvents(sunDataSet){
+function calcLightEvents(sunsetTime){
 
-	console.log("sunset: " + sunDataSet);
+	simpleLog("\nevents:");
 
-	console.log("events:");
 	for (i = 0; i < lightEvents.length; i++){
 		// get moment.js moment for sunset
-		var ssMoment = moment(sunDataSet);
+		var ssMoment = moment(sunsetTime);
 
 		// get each event's timing info by adding its offset to the sunset moment
 		lightEvents[i].moment = ssMoment.add(lightEvents[i].offset, "m");
-		console.log(JSON.stringify(lightEvents[i]));
-
+		simpleLog(JSON.stringify(lightEvents[i]));
 	}
 
-	cronSched(lightEvents);
+	return lightEvents;
 }
 
 
@@ -73,7 +88,7 @@ function getHueScriptPath(){
 // Formats cron time
 function formatCronTime(jobMoment){
 	var formattedTime = jobMoment.format("m H D M") + " *";
-	console.log("formatted time: " + formattedTime);
+	// console.log("formatted time: " + formattedTime);
 	return formattedTime;
 }
 
@@ -82,7 +97,7 @@ function formatCronCommand(sceneId){
 	var hueScriptPath = getHueScriptPath();
 	// TODO -- better way of formatting command? bit rough, but I suppose it works
 	formattedCommand = "node " + hueScriptPath + " " + sceneId;
-	console.log("formatted command: " + formattedCommand);
+	// console.log("formatted command: " + formattedCommand);
 	return formattedCommand;
 }
 
@@ -91,7 +106,8 @@ function cronSched(lightEvents){
 
 	crontab.load(function(err, crontab) {
 		if (err){
-			return console.log(err);
+			simpleLog(err);
+			return;
 		}
 
 		var jobScene, jobCommand, jobTime;
@@ -106,15 +122,24 @@ function cronSched(lightEvents){
 			// var currentJob = crontab.create(jobCommand,jobTime);
 			var currentJob = crontab.create(jobCommand, jobTime);
 
-			console.log('job created. index: ' + i);
+			// console.log('job created. index: ' + i);
 
 		}
 
 		// save
 	  crontab.save(function(err, crontab) {});
 
-		console.log("cronSched complete");
+		// console.log("cronSched complete");
 
 	});
 
+}
+
+
+// logging shorthand
+
+function simpleLog(logString) {
+	fs.appendFile('./log/basicLog.txt', '\n' + logString, (err) => {  
+	    if (err) throw err;
+	});
 }
