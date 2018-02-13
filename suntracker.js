@@ -88,7 +88,7 @@ function getHueScriptPath(){
 // Formats cron time
 function formatCronTime(jobMoment){
 	var formattedTime = jobMoment.format("m H D M") + " *";
-	// console.log("formatted time: " + formattedTime);
+	simpleLog("formatted time: " + formattedTime);
 	return formattedTime;
 }
 
@@ -97,7 +97,7 @@ function formatCronCommand(sceneId){
 	var hueScriptPath = getHueScriptPath();
 	// TODO -- better way of formatting command? bit rough, but I suppose it works
 	formattedCommand = "node " + hueScriptPath + " " + sceneId;
-	// console.log("formatted command: " + formattedCommand);
+	simpleLog("formatted command: " + formattedCommand);
 	return formattedCommand;
 }
 
@@ -119,17 +119,12 @@ function cronSched(lightEvents){
 			jobTime = formatCronTime(jobMoment);
 			jobCommand = formatCronCommand(jobScene);
 
-			// var currentJob = crontab.create(jobCommand,jobTime);
 			var currentJob = crontab.create(jobCommand, jobTime);
-
-			// console.log('job created. index: ' + i);
 
 		}
 
 		// save
 	  crontab.save(function(err, crontab) {});
-
-		// console.log("cronSched complete");
 
 	});
 
