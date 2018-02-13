@@ -9,11 +9,12 @@ Intended for use on a raspberry pi, but anything linux should be fine (uses cron
 
 ## TODO 
 
-* way of deleting old cron tasks so they dont muck up crontab file (by comments?)
 * cron task to run this script every day (secondary "initialize.js" or something that you run once to set up a cron task to run suntracker.js every day)
 * Generalize so it's not hardcoded for my geographic location
 * Extract common Hue components for use in other apps (or turn this into more of a master-hue-project repository)
 	- search for scenes by name?
+* Way to view currently scheduled events, and cancel them if need be (web form?)
+	- cancel today, cancel all week, etc?
 
 
 ## Changelog

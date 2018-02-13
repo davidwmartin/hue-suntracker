@@ -7,6 +7,7 @@ var querystring = require('querystring'),
 		lightEvents = require('./config/sunset-events'); // gets lightEvents array from external config file
 
 
+
 ////// Main Action Here:
 
 simpleLog('\n------------------------------');
@@ -17,12 +18,15 @@ doEverything();
 
 function doEverything(){
 
+	cronClean(); // remove old cron jobs created by this script
+
 	var sunset = getSunset(); // get sunset time
 
 	sunset.then(function(result){
 		simpleLog("sunset: " + result);
 		var lightEvents = calcLightEvents(result);
-		cronSched(lightEvents); // do cron stuff
+
+		cronSched(lightEvents); // set cron jobs
 	});
 
 }
@@ -119,15 +123,33 @@ function cronSched(lightEvents){
 			jobTime = formatCronTime(jobMoment);
 			jobCommand = formatCronCommand(jobScene);
 
-			var currentJob = crontab.create(jobCommand, jobTime);
-
+			var currentJob = crontab.create(jobCommand, jobTime, 'hueSuntracker');
 		}
-
+		
 		// save
 	  crontab.save(function(err, crontab) {});
 
 	});
 
+}
+
+// cron cleanup -- remove any existing hue-suntracker jobs to keep crontab clean
+
+function cronClean(){
+	crontab.load(function(err, crontab){
+		if (err){
+			simpleLog(err);
+			return;
+		}
+		
+		crontab.remove({comment:/hueSuntracker/});
+		crontab.save(function(err, crontab) {
+			if (err){
+				simpleLog(err);
+				return;
+			}
+		});
+	});
 }
 
 
@@ -138,3 +160,5 @@ function simpleLog(logString) {
 	    if (err) throw err;
 	});
 }
+
+
