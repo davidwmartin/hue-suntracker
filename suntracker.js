@@ -157,7 +157,7 @@ function cronClean(){
 
 function simpleLog(logString) {
 	fs.appendFile('./log/basicLog.txt', '\n' + logString, (err) => {  
-	    if (err) throw err;
+	    if (err) simpleLog(err);
 	});
 }
 
