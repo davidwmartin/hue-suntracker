@@ -4,7 +4,8 @@ var querystring = require('querystring'),
 		crontab = require('crontab'), 
 		moment = require('moment'),
 		fs = require('fs'),
-		lightEvents = require('./config/sunset-events'); // gets lightEvents array from external config file
+		lightEvents = require('./config/sunset-events'), 
+		config = require('./config/config.js'); // gets lightEvents array from external config file
 
 
 
@@ -40,7 +41,7 @@ function getSunset() {
 	// request vars
 	var options = {
 		// params for lattitude + longitude, date, formatting
-		host: 'http://api.sunrise-sunset.org/json?lat=34.168851&lng=-118.605448&date=today&formatted=0'
+		host: 'http://api.sunrise-sunset.org/json?lat='+config.lattitude+'&lng='+config.longitude+'&date=today&formatted=0'
 	}
 
 

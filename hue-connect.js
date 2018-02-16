@@ -2,12 +2,12 @@
 var hue = require('node-hue-api'), 
 		HueApi = hue.HueApi,
 		lightState = hue.lightState,
-		hueLogin = require('./config/hue-login.js');
+		config = require('./config/config.js');
 
 
 // setup bridge connection vars
 // NOTE -- still requires manually setting the username (stored in config/hue-login.js so I don't have to publish my config to github)
-var username = hueLogin.username,
+var username = config.username,
 		hostname,
 		api;
 
